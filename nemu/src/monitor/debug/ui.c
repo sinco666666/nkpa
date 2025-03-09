@@ -47,7 +47,6 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   //{ "si", "Let the program step N instructions and then pause execution. If N is not given, the default is 1",cmd_si}
-  
   /* TODO: Add more commands */
 
 };
