@@ -38,6 +38,23 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+static int cmd_si(char *args) {
+    // 没有参数，则默认为1步
+    if(args == NULL) {
+        cpu_exec(1); // 执行1步
+        return 0;
+    }
+    // 有参数，获取
+    int n;
+    if(sscanf(args, "%d", &n) == EOF) {
+        printf("please input a number as args\n");
+    }
+    else {
+        cpu_exec(n); // 执行n步
+    }
+    return 0;
+}
+
 static struct {
   char *name;
   char *description;
@@ -46,7 +63,7 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-  //{ "si", "Let the program step N instructions and then pause execution. If N is not given, the default is 1",cmd_si}
+  { "si", "Execute Ninstructions,the default number is 1",cmd_si},
   
   /* TODO: Add more commands */
 
