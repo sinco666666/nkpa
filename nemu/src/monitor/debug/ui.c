@@ -55,6 +55,36 @@ static int cmd_si(char *args) {
     return 0;
 }
 
+static int cmd_info(char *args) {
+    char s;
+    if(args==NULL){
+        printf("args error in cmd_info\n");
+        return 0;
+    }
+    int nRet=sscanf(args,"%c",&s);
+    if(nRet<=0){
+        printf("args error in cmd_info\n");
+        return 0;
+    }
+    if(s=='r'){
+        int i;
+        for(i=0;i<8;i++)
+            printf("%s  0x%x\n",regsl[i],reg_l(i));
+        printf("eip  0x%x\n",cpu.eip);
+        for(i=0;i<8;i++)
+            printf("%s  0x%x\n",regsw[i],reg_w(i));
+        for(i=0;i<8;i++)
+            printf("%s  0x%x\n",regsb[i],reg_b(i));
+        return 0;
+    }
+    if(s=='w'){
+        print_wp();
+        return 0;
+    }
+    printf("args error in cmd info\n");
+    return 0;
+}
+
 static struct {
   char *name;
   char *description;
@@ -64,6 +94,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   { "si", "Execute Ninstructions,the default number is 1",cmd_si},
+  {"info", "Print register status or Watch information",cmd_info}
   
   /* TODO: Add more commands */
 
