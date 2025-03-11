@@ -69,12 +69,16 @@ static int cmd_info(char *args) {
     if(s=='r'){
         int i;
         for(i=0;i<8;i++)
-            printf("%s  0x%x\n",regsl[i],reg_l(i));
+        {
+            printf("| %-6s %010x | %-4s %010x | %-3s %010x|\n", 
+                  regsl[i], reg_l(i), regsw[i], reg_w(i), regsb[i], reg_b(i));
+        }
+            //printf("%s  0x%x\n",regsl[i],reg_l(i));
         printf("eip  0x%x\n",cpu.eip);
-        for(i=0;i<8;i++)
-            printf("%s  0x%x\n",regsw[i],reg_w(i));
-        for(i=0;i<8;i++)
-            printf("%s  0x%x\n",regsb[i],reg_b(i));
+        //for(i=0;i<8;i++)
+            //printf("%s  0x%x\n",regsw[i],reg_w(i));
+        //for(i=0;i<8;i++)
+            //printf("%s  0x%x\n",regsb[i],reg_b(i));
         return 0;
     }
     if(s=='w'){
