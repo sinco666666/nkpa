@@ -73,7 +73,7 @@ static int cmd_info(char *args) {
             printf("| %-6s %010x | %-4s %010x | %-3s %010x|\n", 
                   regsl[i], reg_l(i), regsw[i], reg_w(i), regsb[i], reg_b(i));
         }
-        printf("eip  0x%x\n",cpu.eip);
+        printf("| %-6s %010x |\n", "eip", cpu.eip);
         return 0;
     }
     if(s=='w'){
@@ -93,7 +93,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   { "si", "Execute Ninstructions,the default number is 1",cmd_si},
-  {"info", "Print register status or Watch information",cmd_info}
+  { "info", "Print register status or Watch information",cmd_info}
   
   /* TODO: Add more commands */
 
