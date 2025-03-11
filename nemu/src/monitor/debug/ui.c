@@ -130,6 +130,7 @@ static struct {
   { "info", "Print register status or Watch information",cmd_info},
   { "x", "Evaluate the expression EXPR, use the result as the starting memory address, and output N consecutive 4-bytes in hexadecimal form",cmd_x},
   
+  
   /* TODO: Add more commands */
 
 };
