@@ -7,18 +7,6 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-extern WP *head;
-
-void printWP() {
-    printf("NUM           Expr           Value\n");
-    printf("----------------------------------\n");
-    WP *wp = head;
-    while (wp != NULL) {
-        printf("%-14d %-14s 0x%x\n", wp->NO, wp->expression, wp->val);
-        wp = wp->next;
-    }
-}
-
 void cpu_exec(uint64_t);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
@@ -90,7 +78,7 @@ static int cmd_info(char *args) {
         return 0;
     }
     if(s=='w'){
-        printWP();
+        //printWP();
         return 0;
     }
     printf("args error in cmd info\n");
