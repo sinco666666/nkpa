@@ -1,6 +1,7 @@
 #include "monitor/monitor.h"
 #include "monitor/expr.h"
 #include "monitor/watchpoint.h"
+#include "/home/sinco/ics2017/nemu/src/monitor/debug/watchpoint.c"
 #include "nemu.h"
 
 #include <stdlib.h>
@@ -78,7 +79,7 @@ static int cmd_info(char *args) {
         return 0;
     }
     if(s=='w'){
-        print_wp();
+        printWP();
         return 0;
     }
     printf("args error in cmd info\n");
