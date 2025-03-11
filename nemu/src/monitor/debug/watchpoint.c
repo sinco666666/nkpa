@@ -20,15 +20,4 @@ void init_wp_pool() {
 
 /* TODO: Implement the functionality of watchpoint */
 
-void printWP() {
-    WP *wp = head;
 
-    // 打印表头
-    printf("NUM           Expr           Value\n");
-
-    // 遍历链表并打印每个 watchpoint 的信息
-    while (wp != NULL) {
-        printf("%-12d  %-16s  %u\n", wp->NO, wp->expression, wp->val);
-        wp = wp->next;
-    }
-}

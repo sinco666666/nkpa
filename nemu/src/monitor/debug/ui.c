@@ -1,12 +1,23 @@
 #include "monitor/monitor.h"
 #include "monitor/expr.h"
 #include "monitor/watchpoint.h"
-#include "/home/sinco/ics2017/nemu/src/monitor/debug/watchpoint.c"
 #include "nemu.h"
 
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+
+extern WP *head;
+
+void printWP() {
+    printf("NUM           Expr           Value\n");
+    printf("----------------------------------\n");
+    WP *wp = head;
+    while (wp != NULL) {
+        printf("%-14d %-14s 0x%x\n", wp->NO, wp->expression, wp->val);
+        wp = wp->next;
+    }
+}
 
 void cpu_exec(uint64_t);
 
