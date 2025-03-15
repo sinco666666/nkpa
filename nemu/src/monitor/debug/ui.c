@@ -118,6 +118,19 @@ static int cmd_x(char *args) {
     return 0;
 }
 
+static int cmd_e(char *args){
+  bool success;
+    uint32_t result = expr(args, &success);
+
+    if (!success) {
+        printf("Error evaluating expression: %s\n", args);
+    } else {
+        printf("Result: %u (0x%x)\n", result, result);
+    }
+
+    return 0;
+}
+
 static struct {
   char *name;
   char *description;
@@ -129,7 +142,7 @@ static struct {
   { "si", "Execute Ninstructions,the default number is 1",cmd_si},
   { "info", "Print register status or Watch information",cmd_info},
   { "x", "Evaluate the expression EXPR, use the result as the starting memory address, and output N consecutive 4-bytes in hexadecimal form",cmd_x},
-  
+  { "e", "expr" , cmd_e},
   
   /* TODO: Add more commands */
 
