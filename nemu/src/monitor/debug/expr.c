@@ -306,7 +306,7 @@ uint32_t eval(int p, int q, bool *success) {
 
   /* 如果子表达式以一元运算符开始，直接求值 */
   if (tokens[p].unary) {
-    uint32_t val = (int32_t)eval(p + 1, q, success);
+    int32_t val = eval(p + 1, q, success);
     if (!(*success)) return 0;
     switch (tokens[p].type) {
       case '-': return -val;
@@ -327,9 +327,9 @@ uint32_t eval(int p, int q, bool *success) {
   }
 
     printf("Evaluating operator: %s\n", tokens[op].str);
-    uint32_t val1 = (int32_t)eval(p, op - 1, success);
+    int32_t val1 = eval(p, op - 1, success);
     if (!(*success)) return 0;
-    uint32_t val2 = (int32_t)eval(op + 1, q, success);
+    int32_t val2 = eval(op + 1, q, success);
     if (!(*success)) return 0;
 
     int32_t result = 0;
