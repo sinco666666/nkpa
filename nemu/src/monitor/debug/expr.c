@@ -187,7 +187,9 @@ bool check_parentheses(int p, int q) {
 
 /* 找到主导运算符 */
 int find_dominant_operator(int p, int q) {
-  int min_precedence = 9999, op_pos = -1, balance = 0;
+  int min_precedence = 9999; 
+  int op_pos = -1;
+  int balance = 0;
 
   for (int i = p; i <= q; i++) {
     if (tokens[i].type == '(') {
@@ -195,7 +197,7 @@ int find_dominant_operator(int p, int q) {
     } else if (tokens[i].type == ')') {
       balance--;
     } else if (balance == 0) {  // 只有最外层的运算符才作为主导运算符
-      if (tokens[i].precedence <= min_precedence) {
+      if (tokens[i].precedence < min_precedence) {
         min_precedence = tokens[i].precedence;
         op_pos = i;
       }
