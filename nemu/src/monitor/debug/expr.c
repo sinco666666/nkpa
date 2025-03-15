@@ -229,7 +229,7 @@ int find_dominant_operator(int p, int q) {
   }
 
   if (op_pos != -1) {
-    printf("Dominant operator: %d at position %d\n", tokens[op_pos].type, op_pos);
+    printf("Dominant operator: %s at position %d\n", tokens[op_pos].str, op_pos);
   }
 
   return op_pos;
