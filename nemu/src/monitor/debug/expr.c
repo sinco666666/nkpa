@@ -304,6 +304,22 @@ uint32_t eval(int p, int q, bool *success) {
       //printf("Evaluating number: %s\n", tokens[p].str);
       *success = true;
       return strtol(tokens[p].str, NULL, 0);
+    }else if (tokens[p].type == TK_REGISTER) {
+      const char *regsl[] = {"eax", "ebx", "ecx", "edx", "esp", "ebp", "esi", "edi"};
+      const char *regsw[] = {"ax", "bx", "cx", "dx", "sp", "bp", "si", "di"};
+      const char *regsb[] = {"al", "bl", "cl", "dl", "ah", "bh", "ch", "dh"};
+      
+      for (int i = 0; i < 8; i++) {
+        if (strcmp(tokens[p].str, regsl[i]) == 0) return reg_l(i);
+        if (strcmp(tokens[p].str, regsw[i]) == 0) return reg_w(i);
+        if (strcmp(tokens[p].str, regsb[i]) == 0) return reg_b(i);
+      }
+
+      if (strcmp(tokens[p].str, "eip") == 0) return cpu.eip;
+      else {
+        printf("error in TK_REGISTER in eval()\n");
+        assert(0);
+      }
     } else {
       *success = false;
       return 0;
@@ -318,9 +334,7 @@ uint32_t eval(int p, int q, bool *success) {
       case '-': return -val;
       case '+': return val;
       case '!': return !val;
-      case '*': 
-        
-        return val;
+      case '*': return vaddr_read(val, 4);
       default:
         *success = false;
         return 0;
