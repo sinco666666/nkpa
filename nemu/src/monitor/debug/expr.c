@@ -47,6 +47,7 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE, 0},    // spaces
+  {"\\$(eax|ecx|edx|ebx|esp|ebp|esi|edi|eip|ax|cx|dx|bx|sp|bp|si|di|al|cl|dl|bl|ah|ch|dh|bh)", TK_REGISTER, OP_LV0},
   {"\\+", '+', OP_LV4},         // plus
   {"\\-", '-', OP_LV4},
   {"\\*", '*', OP_LV3},
