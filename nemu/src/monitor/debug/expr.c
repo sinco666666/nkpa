@@ -245,27 +245,64 @@ int find_dominant_operator(int p, int q) {
 
 /* 递归求值 */
 uint32_t eval(int p, int q, bool *success) {
+  // if (p > q) {
+  //   *success = false;
+  //   return 0;
+  // } else if (p == q) {
+  //   if (tokens[p].type == TK_NUMBER) {
+  //     printf("Evaluating number: %s\n", tokens[p].str);
+  //     *success = true;
+  //     return strtol(tokens[p].str, NULL, 0);
+  //   } else {
+  //     *success = false;
+  //     return 0;
+  //   }
+  // } else if (check_parentheses(p, q)) {
+  //   printf("Evaluating parentheses: %s ...\n", tokens[p].str);
+  //   return eval(p + 1, q - 1, success);
+  // } else {
+  //   int op = find_dominant_operator(p, q);
+  //   if (op == -1) {
+  //     *success = false;
+  //     return 0;
+  //   }
   if (p > q) {
     *success = false;
     return 0;
-  } else if (p == q) {
-    if (tokens[p].type == TK_NUMBER) {
-      printf("Evaluating number: %s\n", tokens[p].str);
+  }
+
+  /* 如果表达式被一对完整的括号包围，则递归求值括号内的表达式 */
+  if (check_parentheses(p, q)) {
+    return eval(p + 1, q - 1, success);
+  }
+
+  /* 如果子表达式以一元运算符开始，直接求值 */
+  if (tokens[p].unary) {
+    uint32_t val = eval(p + 1, q, success);
+    if (!(*success)) return 0;
+    switch (tokens[p].type) {
+      case '-': return -val;
+      case '+': return val;
+      case '*': 
+        // 此处可添加对指针解引用的处理，此处暂简单返回 val
+        return val;
+      default:
+        *success = false;
+        return 0;
+    }
+  }
+
+  /* 寻找主导二元运算符 */
+  int op = find_dominant_operator(p, q);
+  if (op == -1) {
+    /* 如果不存在二元运算符，则应该是单个数字 */
+    if (p == q && tokens[p].type == TK_NUMBER) {
       *success = true;
       return strtol(tokens[p].str, NULL, 0);
-    } else {
-      *success = false;
-      return 0;
     }
-  } else if (check_parentheses(p, q)) {
-    printf("Evaluating parentheses: %s ...\n", tokens[p].str);
-    return eval(p + 1, q - 1, success);
-  } else {
-    int op = find_dominant_operator(p, q);
-    if (op == -1) {
-      *success = false;
-      return 0;
-    }
+    *success = false;
+    return 0;
+  }
 
     printf("Evaluating operator: %s\n", tokens[op].str);
     uint32_t val1 = eval(p, op - 1, success);
@@ -314,7 +351,7 @@ uint32_t eval(int p, int q, bool *success) {
     }
     *success = true;
     return result;
-  }
+  
 }
 
 uint32_t expr(char *e, bool *success) {
