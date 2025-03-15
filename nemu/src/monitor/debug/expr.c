@@ -221,7 +221,7 @@ int find_dominant_operator(int p, int q) {
     } else if (tokens[i].type == ')') {
       balance--;
     } else if (balance == 0) {  // 只有最外层的运算符才作为主导运算符
-      if (tokens[i].precedence < min_precedence) {
+      if (tokens[i].precedence <= min_precedence) {
         min_precedence = tokens[i].precedence;
         op_pos = i;
       }
