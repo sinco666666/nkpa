@@ -120,15 +120,18 @@ static int cmd_x(char *args) {
 
 static int cmd_e(char *args){
   bool success;
-    uint32_t result = expr(args, &success);
+  uint32_t result = expr(args, &success);
 
-    if (!success) {
-        printf("Error evaluating expression: %s\n", args);
-    } else {
-        printf("Result: %u (0x%x)\n", result, result);
-    }
+  printf("Result: %u (0x%x)\n", result, result);
 
-    return 0;
+
+  // if (!success) {
+  //     printf("Error evaluating expression: %s\n", args);
+  // } else {
+  //     printf("Result: %u (0x%x)\n", result, result);
+  // }
+
+  return 0;
 }
 
 static struct {
