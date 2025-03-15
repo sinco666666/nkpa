@@ -5,6 +5,9 @@
  */
 #include <sys/types.h>
 #include <regex.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 enum {
   TK_NOTYPE = 256, 
@@ -154,7 +157,7 @@ static bool make_token(char *e) {
           return false;
         }
 
-        ++nr_token
+        ++nr_token;
         break;
       }
     }
