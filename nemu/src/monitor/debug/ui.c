@@ -120,12 +120,12 @@ static int cmd_x(char *args) {
 
 static int cmd_e(char *args){
   bool success;
-  uint32_t result = expr(args, &success);
+  int32_t result = expr(args, &success);
 
   if (!success) {
       printf("Error evaluating expression: %s\n", args);
   } else {
-      printf("Result: %u (0x%x)\n", result, result);
+      printf("Result: %d (0x%x)\n", result, result);
   }
 
   return 0;

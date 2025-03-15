@@ -282,28 +282,7 @@ int find_dominant_operator(int p, int q) {
 }
 
 /* 递归求值 */
-uint32_t eval(int p, int q, bool *success) {
-  // if (p > q) {
-  //   *success = false;
-  //   return 0;
-  // } else if (p == q) {
-  //   if (tokens[p].type == TK_NUMBER) {
-  //     printf("Evaluating number: %s\n", tokens[p].str);
-  //     *success = true;
-  //     return strtol(tokens[p].str, NULL, 0);
-  //   } else {
-  //     *success = false;
-  //     return 0;
-  //   }
-  // } else if (check_parentheses(p, q)) {
-  //   printf("Evaluating parentheses: %s ...\n", tokens[p].str);
-  //   return eval(p + 1, q - 1, success);
-  // } else {
-  //   int op = find_dominant_operator(p, q);
-  //   if (op == -1) {
-  //     *success = false;
-  //     return 0;
-  //   }
+int32_t eval(int p, int q, bool *success) {
   if (p > q) {
     *success = false;
     return 0;
@@ -327,7 +306,7 @@ uint32_t eval(int p, int q, bool *success) {
 
   /* 如果子表达式以一元运算符开始，直接求值 */
   if (tokens[p].unary) {
-    uint32_t val = eval(p + 1, q, success);
+    int32_t val = eval(p + 1, q, success);
     if (!(*success)) return 0;
     switch (tokens[p].type) {
       case '-': return -val;
@@ -341,7 +320,6 @@ uint32_t eval(int p, int q, bool *success) {
     }
   }
 
-  /* 寻找主导二元运算符 */
   int op = find_dominant_operator(p, q);
   if (op == -1) {
     *success = false;
@@ -349,12 +327,12 @@ uint32_t eval(int p, int q, bool *success) {
   }
 
     printf("Evaluating operator: %s\n", tokens[op].str);
-    uint32_t val1 = eval(p, op - 1, success);
+    int32_t val1 = eval(p, op - 1, success);
     if (!(*success)) return 0;
-    uint32_t val2 = eval(op + 1, q, success);
+    int32_t val2 = eval(op + 1, q, success);
     if (!(*success)) return 0;
 
-    uint32_t result = 0;
+    int32_t result = 0;
     switch (tokens[op].type) {
       case '+': 
         printf("Adding: %d + %d\n", val1, val2);
@@ -398,7 +376,7 @@ uint32_t eval(int p, int q, bool *success) {
   
 }
 
-uint32_t expr(char *e, bool *success) {
+int32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
