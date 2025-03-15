@@ -274,9 +274,9 @@ int find_dominant_operator(int p, int q) {
     }
   }
 
-  if (op_pos != -1) {
-    printf("Dominant operator: %s at position %d\n", tokens[op_pos].str, op_pos);
-  }
+  // if (op_pos != -1) {
+  //   printf("Dominant operator: %s at position %d\n", tokens[op_pos].str, op_pos);
+  // }
 
   return op_pos;
 }
@@ -295,7 +295,7 @@ uint32_t eval(int p, int q, bool *success) {
 
   if (p == q) {
     if (tokens[p].type == TK_NUMBER) {
-      printf("Evaluating number: %s\n", tokens[p].str);
+      //printf("Evaluating number: %s\n", tokens[p].str);
       *success = true;
       return strtol(tokens[p].str, NULL, 0);
     } else {
@@ -326,7 +326,7 @@ uint32_t eval(int p, int q, bool *success) {
     return 0;
   }
 
-    printf("Evaluating operator: %s\n", tokens[op].str);
+    //printf("Evaluating operator: %s\n", tokens[op].str);
     int32_t val1 = eval(p, op - 1, success);
     if (!(*success)) return 0;
     int32_t val2 = eval(op + 1, q, success);
@@ -335,24 +335,24 @@ uint32_t eval(int p, int q, bool *success) {
     int32_t result = 0;
     switch (tokens[op].type) {
       case '+': 
-        printf("Adding: %d + %d\n", val1, val2);
+        //printf("Adding: %d + %d\n", val1, val2);
         result = val1 + val2;
         break;
       case '-': 
-        printf("Subtracting: %d - %d\n", val1, val2);
+        //printf("Subtracting: %d - %d\n", val1, val2);
         result = val1 - val2;
         break;
       case '*': 
-        printf("Multiplying: %d * %d\n", val1, val2);
+        //printf("Multiplying: %d * %d\n", val1, val2);
         result = val1 * val2;
         break;
       case '/':
         if (val2 == 0) {
-          printf("Error: Division by zero\n");
+          //printf("Error: Division by zero\n");
           *success = false;
           return 0;
         }
-        printf("Dividing: %d / %d\n", val1, val2);
+        //printf("Dividing: %d / %d\n", val1, val2);
         result = val1 / val2;
         break;
       case TK_EQ:
