@@ -121,7 +121,17 @@ static bool make_token(char *e) {
 
         switch (rules[i].token_type) {
           case '+':
-            tokens[nr_token].precedence = OP_LV4;
+            if (nr_token == 0 ||
+                tokens[nr_token - 1].type == '(' ||
+                tokens[nr_token - 1].type == '+' ||
+                tokens[nr_token - 1].type == '-' ||
+                tokens[nr_token - 1].type == '*' ||
+                tokens[nr_token - 1].type == '/') {
+              tokens[nr_token].precedence = OP_LV2_1;
+              tokens[nr_token].unary = true;
+            } else {
+              tokens[nr_token].precedence = OP_LV4;
+            }
             break;
 
           case '-':
@@ -194,6 +204,34 @@ static bool make_token(char *e) {
   }
 
   return true;
+}
+
+void merge_unary_number_tokens() {
+  int i = 0;
+  while (i < nr_token) {
+    if (tokens[i].unary && (tokens[i].type == '-' || tokens[i].type == '+')) {
+      if (i + 1 < nr_token && tokens[i + 1].type == TK_NUMBER) {
+        char new_str[32];
+        if (tokens[i].type == '-') {
+          snprintf(new_str, sizeof(new_str), "-%s", tokens[i + 1].str);
+        } else { // 对于一元 +，直接复制数字即可
+          snprintf(new_str, sizeof(new_str), "%s", tokens[i + 1].str);
+        }
+        // 修改当前 token 为数字 token，并合并字符串
+        tokens[i].type = TK_NUMBER;
+        strncpy(tokens[i].str, new_str, sizeof(tokens[i].str));
+        tokens[i].unary = false;
+        // 将后面的 token 向前移动一位
+        for (int j = i + 1; j < nr_token - 1; j++) {
+          tokens[j] = tokens[j + 1];
+        }
+        nr_token--;
+        // 合并后不递增 i，以防连续合并
+        continue;
+      }
+    }
+    i++;
+  }
 }
 
 /* 检查是否是完整匹配的括号 */
@@ -276,6 +314,17 @@ uint32_t eval(int p, int q, bool *success) {
     return eval(p + 1, q - 1, success);
   }
 
+  if (p == q) {
+    if (tokens[p].type == TK_NUMBER) {
+      printf("Evaluating number: %s\n", tokens[p].str);
+      *success = true;
+      return strtol(tokens[p].str, NULL, 0);
+    } else {
+      *success = false;
+      return 0;
+    }
+  }
+
   /* 如果子表达式以一元运算符开始，直接求值 */
   if (tokens[p].unary) {
     uint32_t val = eval(p + 1, q, success);
@@ -284,7 +333,7 @@ uint32_t eval(int p, int q, bool *success) {
       case '-': return -val;
       case '+': return val;
       case '*': 
-        // 此处可添加对指针解引用的处理，此处暂简单返回 val
+        
         return val;
       default:
         *success = false;
@@ -295,11 +344,6 @@ uint32_t eval(int p, int q, bool *success) {
   /* 寻找主导二元运算符 */
   int op = find_dominant_operator(p, q);
   if (op == -1) {
-    /* 如果不存在二元运算符，则应该是单个数字 */
-    if (p == q && tokens[p].type == TK_NUMBER) {
-      *success = true;
-      return strtol(tokens[p].str, NULL, 0);
-    }
     *success = false;
     return 0;
   }
@@ -361,5 +405,6 @@ uint32_t expr(char *e, bool *success) {
   }
 
   /* 计算表达式的值 */
+  merge_unary_number_tokens();
   return eval(0, nr_token - 1, success);
 }
