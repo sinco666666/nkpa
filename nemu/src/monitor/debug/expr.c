@@ -114,37 +114,61 @@ static bool make_token(char *e) {
          * of tokens, some extra actions should be performed.
          */
 
+        if (rules[i].token_type == TK_NOTYPE) {
+          break;
+        }
+
+        tokens[nr_token].type = rules[i].token_type;
+
         switch (rules[i].token_type) {
           case '+':
-          case '-':
-            tokens[nr_token].type = rules[i].token_type;
             tokens[nr_token].precedence = OP_LV4;
             break;
 
+          case '-':
+            if (nr_token == 0 || 
+                tokens[nr_token - 1].type == '(' || 
+                tokens[nr_token - 1].type == '+' || 
+                tokens[nr_token - 1].type == '-' || 
+                tokens[nr_token - 1].type == '*' || 
+                tokens[nr_token - 1].type == '/' ) {
+              tokens[nr_token].precedence = OP_LV2_1; // 作为一元负号
+            } else {
+              tokens[nr_token].precedence = OP_LV4; // 作为二元减法
+            }
+            break;
+
           case '*':
+            if (nr_token == 0 || 
+                tokens[nr_token - 1].type == '(' || 
+                tokens[nr_token - 1].type == '+' || 
+                tokens[nr_token - 1].type == '-' || 
+                tokens[nr_token - 1].type == '*' || 
+                tokens[nr_token - 1].type == '/' ) {
+              tokens[nr_token].precedence = OP_LV2_2; // 作为解引用
+            } else {
+              tokens[nr_token].precedence = OP_LV3; // 作为乘法
+            }
+            break;
+
           case '/':
-            tokens[nr_token].type = rules[i].token_type;
             tokens[nr_token].precedence = OP_LV3;
             break;
 
           case TK_EQ:
           case TK_NE:
-            tokens[nr_token].type = rules[i].token_type;
             tokens[nr_token].precedence = OP_LV7;
             break;
 
           case TK_AND:
-            tokens[nr_token].type = rules[i].token_type;
             tokens[nr_token].precedence = OP_LV11;
             break;
 
           case TK_OR:
-            tokens[nr_token].type = rules[i].token_type;
             tokens[nr_token].precedence = OP_LV12;
             break;
 
           default:
-            tokens[nr_token].type = rules[i].token_type;
             tokens[nr_token].precedence = rules[i].precedence; // 直接使用默认优先级
             break;
         }
