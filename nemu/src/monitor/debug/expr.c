@@ -317,6 +317,7 @@ uint32_t eval(int p, int q, bool *success) {
     switch (tokens[p].type) {
       case '-': return -val;
       case '+': return val;
+      case '!': return !val;
       case '*': 
         
         return val;
@@ -330,12 +331,6 @@ uint32_t eval(int p, int q, bool *success) {
   if (op == -1) {
     *success = false;
     return 0;
-  }
-
-  if (tokens[p].type == '!') {
-    uint32_t val = eval(p + 1, q, success);
-    if (!*success) return 0;
-    return !val;
   }
 
   //printf("Evaluating operator: %s\n", tokens[op].str);
