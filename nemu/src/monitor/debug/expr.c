@@ -87,6 +87,7 @@ typedef struct token {
   int type;
   char str[32];
   int precedence; 
+  bool unary;
 } Token;
 
 Token tokens[32];
@@ -116,6 +117,7 @@ static bool make_token(char *e) {
         }
 
         tokens[nr_token].type = rules[i].token_type;
+        tokens[nr_token].unary = false;  // 默认视为二元运算符
 
         switch (rules[i].token_type) {
           case '+':
@@ -130,6 +132,7 @@ static bool make_token(char *e) {
                 tokens[nr_token - 1].type == '*' || 
                 tokens[nr_token - 1].type == '/' ) {
               tokens[nr_token].precedence = OP_LV2_1; // 作为一元负号
+              tokens[nr_token].unary = true;
             } else {
               tokens[nr_token].precedence = OP_LV4; // 作为二元减法
             }
@@ -143,6 +146,7 @@ static bool make_token(char *e) {
                 tokens[nr_token - 1].type == '*' || 
                 tokens[nr_token - 1].type == '/' ) {
               tokens[nr_token].precedence = OP_LV2_2; // 作为解引用
+              tokens[nr_token].unary = true;
             } else {
               tokens[nr_token].precedence = OP_LV3; // 作为乘法
             }
@@ -220,6 +224,9 @@ int find_dominant_operator(int p, int q) {
     } else if (balance == 0) {  // 只考虑最外层的运算符
       // 跳过数字和寄存器
       if (tokens[i].type == TK_NUMBER || tokens[i].type == TK_REGISTER) {
+        continue;
+      }
+      if (tokens[i].unary) {
         continue;
       }
       if (tokens[i].precedence >= max_precedence) {
