@@ -122,14 +122,11 @@ static int cmd_e(char *args){
   bool success;
   uint32_t result = expr(args, &success);
 
-  printf("Result: %u (0x%x)\n", result, result);
-
-
-  // if (!success) {
-  //     printf("Error evaluating expression: %s\n", args);
-  // } else {
-  //     printf("Result: %u (0x%x)\n", result, result);
-  // }
+  if (!success) {
+      printf("Error evaluating expression: %s\n", args);
+  } else {
+      printf("Result: %u (0x%x)\n", result, result);
+  }
 
   return 0;
 }
