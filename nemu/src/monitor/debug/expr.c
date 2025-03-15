@@ -211,7 +211,7 @@ bool check_parentheses(int p, int q) {
 
 /* 找到主导运算符 */
 int find_dominant_operator(int p, int q) {
-  int min_precedence = 9999; 
+  int max_precedence = -1; 
   int op_pos = -1;
   int balance = 0;
 
@@ -220,9 +220,13 @@ int find_dominant_operator(int p, int q) {
       balance++;
     } else if (tokens[i].type == ')') {
       balance--;
-    } else if (balance == 0) {  // 只有最外层的运算符才作为主导运算符
-      if (tokens[i].precedence > min_precedence) {
-        min_precedence = tokens[i].precedence;
+    } else if (balance == 0) {  // 只有最外层的运算符才考虑
+      // 跳过操作数：TK_NUMBER 和 TK_REGISTER
+      if (tokens[i].type == TK_NUMBER || tokens[i].type == TK_REGISTER) {
+        continue;
+      }
+      if (tokens[i].precedence > max_precedence) {
+        max_precedence = tokens[i].precedence;
         op_pos = i;
       }
     }
