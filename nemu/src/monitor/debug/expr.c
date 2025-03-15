@@ -282,7 +282,7 @@ int find_dominant_operator(int p, int q) {
 }
 
 /* 递归求值 */
-int32_t eval(int p, int q, bool *success) {
+uint32_t eval(int p, int q, bool *success) {
   if (p > q) {
     *success = false;
     return 0;
@@ -306,7 +306,7 @@ int32_t eval(int p, int q, bool *success) {
 
   /* 如果子表达式以一元运算符开始，直接求值 */
   if (tokens[p].unary) {
-    int32_t val = eval(p + 1, q, success);
+    uint32_t val = (int32_t)eval(p + 1, q, success);
     if (!(*success)) return 0;
     switch (tokens[p].type) {
       case '-': return -val;
@@ -327,9 +327,9 @@ int32_t eval(int p, int q, bool *success) {
   }
 
     printf("Evaluating operator: %s\n", tokens[op].str);
-    int32_t val1 = eval(p, op - 1, success);
+    uint32_t val1 = (int32_t)eval(p, op - 1, success);
     if (!(*success)) return 0;
-    int32_t val2 = eval(op + 1, q, success);
+    uint32_t val2 = (int32_t)eval(op + 1, q, success);
     if (!(*success)) return 0;
 
     int32_t result = 0;
@@ -372,11 +372,11 @@ int32_t eval(int p, int q, bool *success) {
         return 0;
     }
     *success = true;
-    return result;
+    return (uint32_t)result;
   
 }
 
-int32_t expr(char *e, bool *success) {
+uint32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
