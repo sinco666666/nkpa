@@ -59,7 +59,8 @@ static struct rule {
   {"!=", TK_NE, OP_LV7},  
   {"&&", TK_AND, OP_LV11},
   {"\\|\\|", TK_OR, OP_LV12},
-  {"==", TK_EQ, OP_LV7}         // equal
+  {"==", TK_EQ, OP_LV7},         // equal
+  {"!", '!', OP_LV2_1}, 
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -164,6 +165,11 @@ static bool make_token(char *e) {
 
           case '/':
             tokens[nr_token].precedence = OP_LV3;
+            break;
+          
+          case '!':
+            tokens[nr_token].precedence = OP_LV2_1;
+            tokens[nr_token].unary = true;  // 逻辑非运算符是单目运算符
             break;
 
           case TK_EQ:
@@ -326,53 +332,59 @@ uint32_t eval(int p, int q, bool *success) {
     return 0;
   }
 
-    //printf("Evaluating operator: %s\n", tokens[op].str);
-    int32_t val1 = eval(p, op - 1, success);
-    if (!(*success)) return 0;
-    int32_t val2 = eval(op + 1, q, success);
-    if (!(*success)) return 0;
+  if (tokens[p].type == '!') {
+    uint32_t val = eval(p + 1, q, success);
+    if (!*success) return 0;
+    return !val;
+  }
 
-    int32_t result = 0;
-    switch (tokens[op].type) {
-      case '+': 
-        //printf("Adding: %d + %d\n", val1, val2);
-        result = val1 + val2;
-        break;
-      case '-': 
-        //printf("Subtracting: %d - %d\n", val1, val2);
-        result = val1 - val2;
-        break;
-      case '*': 
-        //printf("Multiplying: %d * %d\n", val1, val2);
-        result = val1 * val2;
-        break;
-      case '/':
-        if (val2 == 0) {
-          //printf("Error: Division by zero\n");
-          *success = false;
-          return 0;
-        }
-        //printf("Dividing: %d / %d\n", val1, val2);
-        result = val1 / val2;
-        break;
-      case TK_EQ:
-        result = (val1 == val2);
-        break;
-      case TK_NE:
-        result = (val1 != val2);
-        break;
-      case TK_AND:
-        result = (val1 && val2);
-        break;
-      case TK_OR:
-        result = (val1 || val2);
-        break;
-      default:
+  //printf("Evaluating operator: %s\n", tokens[op].str);
+  int32_t val1 = eval(p, op - 1, success);
+  if (!(*success)) return 0;
+  int32_t val2 = eval(op + 1, q, success);
+  if (!(*success)) return 0;
+
+  int32_t result = 0;
+  switch (tokens[op].type) {
+    case '+': 
+      //printf("Adding: %d + %d\n", val1, val2);
+      result = val1 + val2;
+      break;
+    case '-': 
+      //printf("Subtracting: %d - %d\n", val1, val2);
+      result = val1 - val2;
+      break;
+    case '*': 
+      //printf("Multiplying: %d * %d\n", val1, val2);
+      result = val1 * val2;
+      break;
+    case '/':
+      if (val2 == 0) {
+        //printf("Error: Division by zero\n");
         *success = false;
         return 0;
-    }
-    *success = true;
-    return (uint32_t)result;
+      }
+      //printf("Dividing: %d / %d\n", val1, val2);
+      result = val1 / val2;
+      break;
+    case TK_EQ:
+      result = (val1 == val2);
+      break;
+    case TK_NE:
+      result = (val1 != val2);
+      break;
+    case TK_AND:
+      result = (val1 && val2);
+      break;
+    case TK_OR:
+      result = (val1 || val2);
+      break;
+    default:
+      *success = false;
+      return 0;
+  }
+  *success = true;
+  return (uint32_t)result;
   
 }
 
