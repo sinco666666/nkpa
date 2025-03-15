@@ -221,7 +221,7 @@ int find_dominant_operator(int p, int q) {
       if (tokens[i].type == TK_NUMBER || tokens[i].type == TK_REGISTER) {
         continue;
       }
-      if (tokens[i].precedence <= min_precedence) {
+      if (tokens[i].precedence > min_precedence) {
         min_precedence = tokens[i].precedence;
         op_pos = i;
       }
