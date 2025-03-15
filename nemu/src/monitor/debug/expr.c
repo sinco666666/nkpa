@@ -239,12 +239,14 @@ uint32_t eval(int p, int q, bool *success) {
     return 0;
   } else if (p == q) {
     if (tokens[p].type == TK_NUMBER) {
+      printf("Evaluating number: %s\n", tokens[p].str);
       return strtol(tokens[p].str, NULL, 0);
     } else {
       *success = false;
       return 0;
     }
   } else if (check_parentheses(p, q)) {
+    printf("Evaluating parentheses: %s\n", tokens[p].str);
     return eval(p + 1, q - 1, success);
   } else {
     int op = find_dominant_operator(p, q);
@@ -253,21 +255,29 @@ uint32_t eval(int p, int q, bool *success) {
       return 0;
     }
 
+    printf("Evaluating operator: %s\n", tokens[op].str);
     uint32_t val1 = eval(p, op - 1, success);
     uint32_t val2 = eval(op + 1, q, success);
 
     if (!(*success)) return 0;
 
     switch (tokens[op].type) {
-      case '+': return val1 + val2;
-      case '-': return val1 - val2;
-      case '*': return val1 * val2;
+      case '+': 
+        printf("Adding: %d + %d\n", val1, val2);
+        return val1 + val2;
+      case '-': 
+        printf("Subtracting: %d - %d\n", val1, val2);
+        return val1 - val2;
+      case '*': 
+        printf("Multiplying: %d * %d\n", val1, val2);
+        return val1 * val2;
       case '/':
         if (val2 == 0) {
           printf("Error: Division by zero\n");
           *success = false;
           return 0;
         }
+        printf("Dividing: %d / %d\n", val1, val2);
         return val1 / val2;
       case TK_EQ: return val1 == val2;
       case TK_NE: return val1 != val2;
@@ -279,6 +289,7 @@ uint32_t eval(int p, int q, bool *success) {
     }
   }
 }
+
 
 
 uint32_t expr(char *e, bool *success) {
