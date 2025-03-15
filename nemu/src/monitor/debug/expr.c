@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 enum {
   TK_NOTYPE = 256, 
@@ -109,11 +110,7 @@ static bool make_token(char *e) {
             i, rules[i].regex, position, substr_len, substr_len, substr_start);
         position += substr_len;
 
-        /* TODO: Now a new token is recognized with rules[i]. Add codes
-         * to record the token in the array `tokens'. For certain types
-         * of tokens, some extra actions should be performed.
-         */
-
+        /* 对于空格类型，不需要生成 token */
         if (rules[i].token_type == TK_NOTYPE) {
           break;
         }
@@ -221,7 +218,7 @@ int find_dominant_operator(int p, int q) {
     } else if (tokens[i].type == ')') {
       balance--;
     } else if (balance == 0) {  // 只有最外层的运算符才作为主导运算符
-    if (tokens[i].type == TK_NUMBER || tokens[i].type == TK_REGISTER) {
+      if (tokens[i].type == TK_NUMBER || tokens[i].type == TK_REGISTER) {
         continue;
       }
       if (tokens[i].precedence <= min_precedence) {
@@ -238,7 +235,6 @@ int find_dominant_operator(int p, int q) {
   return op_pos;
 }
 
-
 /* 递归求值 */
 uint32_t eval(int p, int q, bool *success) {
   if (p > q) {
@@ -247,13 +243,14 @@ uint32_t eval(int p, int q, bool *success) {
   } else if (p == q) {
     if (tokens[p].type == TK_NUMBER) {
       printf("Evaluating number: %s\n", tokens[p].str);
+      *success = true;
       return strtol(tokens[p].str, NULL, 0);
     } else {
       *success = false;
       return 0;
     }
   } else if (check_parentheses(p, q)) {
-    printf("Evaluating parentheses: %s\n", tokens[p].str);
+    printf("Evaluating parentheses: %s ...\n", tokens[p].str);
     return eval(p + 1, q - 1, success);
   } else {
     int op = find_dominant_operator(p, q);
@@ -264,20 +261,24 @@ uint32_t eval(int p, int q, bool *success) {
 
     printf("Evaluating operator: %s\n", tokens[op].str);
     uint32_t val1 = eval(p, op - 1, success);
+    if (!(*success)) return 0;
     uint32_t val2 = eval(op + 1, q, success);
-
     if (!(*success)) return 0;
 
+    uint32_t result = 0;
     switch (tokens[op].type) {
       case '+': 
         printf("Adding: %d + %d\n", val1, val2);
-        return val1 + val2;
+        result = val1 + val2;
+        break;
       case '-': 
         printf("Subtracting: %d - %d\n", val1, val2);
-        return val1 - val2;
+        result = val1 - val2;
+        break;
       case '*': 
         printf("Multiplying: %d * %d\n", val1, val2);
-        return val1 * val2;
+        result = val1 * val2;
+        break;
       case '/':
         if (val2 == 0) {
           printf("Error: Division by zero\n");
@@ -285,19 +286,28 @@ uint32_t eval(int p, int q, bool *success) {
           return 0;
         }
         printf("Dividing: %d / %d\n", val1, val2);
-        return val1 / val2;
-      case TK_EQ: return val1 == val2;
-      case TK_NE: return val1 != val2;
-      case TK_AND: return val1 && val2;
-      case TK_OR: return val1 || val2;
+        result = val1 / val2;
+        break;
+      case TK_EQ:
+        result = (val1 == val2);
+        break;
+      case TK_NE:
+        result = (val1 != val2);
+        break;
+      case TK_AND:
+        result = (val1 && val2);
+        break;
+      case TK_OR:
+        result = (val1 || val2);
+        break;
       default:
         *success = false;
         return 0;
     }
+    *success = true;
+    return result;
   }
 }
-
-
 
 uint32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -305,9 +315,6 @@ uint32_t expr(char *e, bool *success) {
     return 0;
   }
 
-  /* TODO: Insert codes to evaluate the expression. */
-  //TODO();
+  /* 计算表达式的值 */
   return eval(0, nr_token - 1, success);
-
-  return 0;
 }
