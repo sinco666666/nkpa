@@ -306,27 +306,25 @@ uint32_t eval(int p, int q, bool *success) {
       *success = true;
       return strtol(tokens[p].str, NULL, 0);
     }else if (tokens[p].type == TK_REGISTER) {
-      // const char *regsl[] = {"eax", "ebx", "ecx", "edx", "esp", "ebp", "esi", "edi"};
-      // const char *regsw[] = {"ax", "bx", "cx", "dx", "sp", "bp", "si", "di"};
-      // const char *regsb[] = {"al", "bl", "cl", "dl", "ah", "bh", "ch", "dh"};
-
-      const char *reg_name = tokens[p].str;
-      if (reg_name[0] == '$') {
-          reg_name++;
-      }
-      
-      for (int i = 0; i < 8; i++) {
-        if (strcmp(tokens[p].str, regsl[i]) == 0) return reg_l(i);
-        if (strcmp(tokens[p].str, regsw[i]) == 0) return reg_w(i);
-        if (strcmp(tokens[p].str, regsb[i]) == 0) return reg_b(i);
-      }
-
-      if (strcmp(tokens[p].str, "eip") == 0) return cpu.eip;
-      else {
-        printf("error in TK_REGISTER in eval()\n");
+    // 使用局部指针指向 token 字符串，并跳过前导 '$'（如果存在）
+    char *reg = tokens[p].str;
+    if (reg[0] == '$') {
+        reg++;
+    }
+    
+    // 使用全局定义的寄存器名称数组
+    for (int i = 0; i < 8; i++) {
+        if (strcmp(reg, regsl[i]) == 0) return reg_l(i);
+        if (strcmp(reg, regsw[i]) == 0) return reg_w(i);
+        if (strcmp(reg, regsb[i]) == 0) return reg_b(i);
+    }
+    
+    if (strcmp(reg, "eip") == 0) return cpu.eip;
+    else {
+        printf("error in TK_REGISTER in eval(): unknown register %s\n", tokens[p].str);
         assert(0);
-      }
-    } else {
+    }
+}else {
       *success = false;
       return 0;
     }
