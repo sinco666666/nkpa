@@ -306,9 +306,9 @@ uint32_t eval(int p, int q, bool *success) {
       *success = true;
       return strtol(tokens[p].str, NULL, 0);
     }else if (tokens[p].type == TK_REGISTER) {
-      const char *regsl[] = {"eax", "ebx", "ecx", "edx", "esp", "ebp", "esi", "edi"};
-      const char *regsw[] = {"ax", "bx", "cx", "dx", "sp", "bp", "si", "di"};
-      const char *regsb[] = {"al", "bl", "cl", "dl", "ah", "bh", "ch", "dh"};
+      // const char *regsl[] = {"eax", "ebx", "ecx", "edx", "esp", "ebp", "esi", "edi"};
+      // const char *regsw[] = {"ax", "bx", "cx", "dx", "sp", "bp", "si", "di"};
+      // const char *regsb[] = {"al", "bl", "cl", "dl", "ah", "bh", "ch", "dh"};
 
       const char *reg_name = tokens[p].str;
       if (reg_name[0] == '$') {
