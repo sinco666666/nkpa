@@ -54,7 +54,7 @@ static struct rule {
   {"/", '/', OP_LV3},
   {"\\(", '(', OP_LV1},
   {"\\)", ')', OP_LV1},
-  {"\\$[a-zA-Z0-9]+", TK_REGISTER, OP_LV0},
+  //{"\\$[a-zA-Z0-9]+", TK_REGISTER, OP_LV0},
   {"0[xX][0-9a-fA-F]+", TK_NUMBER, OP_LV0}, //hex
   {"0|[1-9][0-9]*", TK_NUMBER, OP_LV0},
   {"!=", TK_NE, OP_LV7},  
