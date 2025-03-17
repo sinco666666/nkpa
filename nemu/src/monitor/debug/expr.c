@@ -306,13 +306,10 @@ uint32_t eval(int p, int q, bool *success) {
       *success = true;
       return strtol(tokens[p].str, NULL, 0);
     }else if (tokens[p].type == TK_REGISTER) {
-    // 使用局部指针指向 token 字符串，并跳过前导 '$'（如果存在）
     char *reg = tokens[p].str;
     if (reg[0] == '$') {
         reg++;
     }
-    
-    // 使用全局定义的寄存器名称数组
     for (int i = 0; i < 8; i++) {
         if (strcmp(reg, regsl[i]) == 0) {*success = true; return reg_l(i);}
         if (strcmp(reg, regsw[i]) == 0) {*success = true; return reg_w(i);}
