@@ -3,6 +3,8 @@
 #include "monitor/watchpoint.h"
 #include "nemu.h"
 
+#include "/home/sinco/ics2017/nemu/src/monitor/debug/watchpoint.c"
+
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -131,6 +133,72 @@ static int cmd_e(char *args){
   return 0;
 }
 
+static int cmd_w(char *args) {
+  if (args == NULL) {
+    printf("Usage: w EXPR\n");
+    return 0;
+  }
+  
+  // 计算表达式的值
+  bool success;
+  uint32_t value = expr(args, &success);
+  if (!success) {
+    printf("Error: Failed to evaluate expression: %s\n", args);
+    return 0;
+  }
+  
+  // 从监视点池中申请一个新的监视点
+  WP *wp = new_wp();
+  if (wp == NULL) {
+    // new_wp() 内部已提示无空闲监视点
+    return 0;
+  }
+  
+  // 将表达式保存到监视点中（注意防止字符串溢出）
+  strncpy(wp->expression, args, sizeof(wp->expression) - 1);
+  wp->expression[sizeof(wp->expression) - 1] = '\0';
+  
+  // 记录表达式计算的初始值
+  wp->val = value;
+  
+  printf("Set watchpoint %d: %s = 0x%08x\n", wp->NO, wp->expression, wp->val);
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  if (args == NULL) {
+    printf("Usage: d N\n");
+    return 0;
+  }
+  
+  int num;
+  if (sscanf(args, "%d", &num) != 1) {
+    printf("Invalid watchpoint number: %s\n", args);
+    return 0;
+  }
+  
+  // 在正在使用的监视点链表中查找监视点
+  WP *wp = head;
+  WP *target = NULL;
+  while (wp != NULL) {
+    if (wp->NO == num) {
+      target = wp;
+      break;
+    }
+    wp = wp->next;
+  }
+  
+  if (target == NULL) {
+    printf("Watchpoint %d not found.\n", num);
+    return 0;
+  }
+  
+  // 归还监视点到空闲池
+  free_wp(target);
+  printf("Deleted watchpoint %d.\n", num);
+  return 0;
+}
+
 static struct {
   char *name;
   char *description;
@@ -143,6 +211,8 @@ static struct {
   { "info", "Print register status or Watch information",cmd_info},
   { "x", "Evaluate the expression EXPR, use the result as the starting memory address, and output N consecutive 4-bytes in hexadecimal form",cmd_x},
   { "e", "expr" , cmd_e},
+  { "w", "Set a watch", cmd_w},
+  { "d", "Delete watch", cmd_d},
   
   /* TODO: Add more commands */
 
