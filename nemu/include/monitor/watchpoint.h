@@ -19,5 +19,6 @@ void free_wp(WP *wp);
 void printWP();
 WP* get_head();
 WP* get_free_();
+bool watch_wp();
 
 #endif

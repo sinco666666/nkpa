@@ -78,6 +78,22 @@ void printWP() {
   }
 }
 
+bool watch_wp() {
+  bool changed = false;
+  for (WP *wp = head; wp != NULL; wp = wp->next) {
+    bool success = false;
+    uint32_t new_val = expr(wp->expression, &success);
+    if (!success) {
+      printf("Error evaluating expression: %s\n", wp->expression);
+    } else if (new_val != wp->val) {
+      printf("Watchpoint %d: %s changed from 0x%08x to 0x%08x\n", wp->NO, wp->expression, wp->val, new_val);
+      wp->val = new_val;
+      changed = true;
+    }
+  }
+  return changed;
+}
+
 WP* get_head(){
   return head;
 }
