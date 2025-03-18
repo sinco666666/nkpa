@@ -2,6 +2,7 @@
 #include "monitor/expr.h"
 #include "monitor/watchpoint.h"
 #include "nemu.h"
+#include "./watchpoint.c"
 
 #include <stdlib.h>
 #include <readline/readline.h>
@@ -77,7 +78,7 @@ static int cmd_info(char *args) {
         return 0;
     }
     if(s=='w'){
-        //printWP();
+        printWP();
         return 0;
     }
     printf("args error in cmd info\n");
