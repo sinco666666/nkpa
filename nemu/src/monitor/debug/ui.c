@@ -3,8 +3,6 @@
 #include "monitor/watchpoint.h"
 #include "nemu.h"
 
-#include "/home/sinco/ics2017/nemu/src/monitor/debug/watchpoint.c"
-
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -178,7 +176,7 @@ static int cmd_d(char *args) {
   }
   
   // 在正在使用的监视点链表中查找监视点
-  WP *wp = head;
+  WP *wp = get_head();
   WP *target = NULL;
   while (wp != NULL) {
     if (wp->NO == num) {

@@ -77,3 +77,11 @@ void printWP() {
     printf("%-8d %-16s 0x%08x\n", wp->NO, wp->expression, wp->val);
   }
 }
+
+WP* get_head(){
+  return head;
+}
+
+WP* get_free_(){
+  return free_;
+}
