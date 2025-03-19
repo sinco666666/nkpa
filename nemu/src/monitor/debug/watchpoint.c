@@ -72,8 +72,6 @@ void free_wp(WP *wp) {
 void printWP() {
   printf("Num        Expr        Value\n");
   for (WP *wp = head; wp != NULL; wp = wp->next) {
-    // 这里使用 %-8d 和 %-16s 格式控制符对齐输出，
-    // 对于 val 使用 0x%08x 格式输出 8 位十六进制数
     printf("%-8d %-16s 0x%08x\n", wp->NO, wp->expression, wp->val);
   }
 }
