@@ -38,3 +38,4 @@ make_EHelper(shr);
 make_EHelper(dec);
 make_EHelper(or);
 make_EHelper(not);
+make_EHelper(adc);
