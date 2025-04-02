@@ -43,3 +43,5 @@ make_EHelper(not);
 make_EHelper(adc);
 make_EHelper(inc);
 make_EHelper(cltd);
+make_EHelper(div);
+make_EHelper(idiv);
