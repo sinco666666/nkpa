@@ -28,6 +28,8 @@ make_EHelper(nop);
 make_EHelper(add);
 make_EHelper(cmp);
 make_EHelper(imul1);
+make_EHelper(imul2);
+make_EHelper(imul3);
 make_EHelper(test);
 make_EHelper(setcc);
 make_EHelper(movzx);
