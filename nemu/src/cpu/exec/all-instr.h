@@ -30,3 +30,5 @@ make_EHelper(cmp);
 make_EHelper(imul1);
 make_EHelper(test);
 make_EHelper(setcc);
+make_EHelper(movzx);
+make_EHelper(movsx);
