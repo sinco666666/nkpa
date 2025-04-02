@@ -29,3 +29,4 @@ make_EHelper(add);
 make_EHelper(cmp);
 make_EHelper(imul1);
 make_EHelper(test);
+make_EHelper(setcc);
