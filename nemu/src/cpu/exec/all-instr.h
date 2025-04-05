@@ -47,3 +47,4 @@ make_EHelper(div);
 make_EHelper(idiv);
 make_EHelper(leave);
 make_EHelper(sbb);
+make_EHelper(neg);
