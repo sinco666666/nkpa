@@ -159,7 +159,15 @@ void difftest_step(uint32_t eip) {
   if (r.eax != cpu.esi) diff = true;
   if (r.eax != cpu.edi) diff = true;
 
+  // if (diff) {
+  //   nemu_state = NEMU_END;
+  // }
   if (diff) {
     nemu_state = NEMU_END;
+    Log("Different in registers: when nemu.eip=0x%x", cpu.eip);
+  }
+  if (r.eip != cpu.eip) {
+    diff = true;
+    Log("Different:qemu.eip=0x%x, and nemu.eip=0x%x", r.eip, cpu.eip);
   }
 }
