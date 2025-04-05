@@ -1,8 +1,8 @@
 #include "cpu/exec.h"
 
 make_EHelper(test) {
-  rtl_and(&t0 ,&id_dest->val, &id_src->val);
-  rtl_update_ZFSF(&t0 , id_dest->width);
+  rtl_and(&t2 ,&id_dest->val, &id_src->val);
+  rtl_update_ZFSF(&t2 , id_dest->width);
   rtl_set_CF(&tzero);
   rtl_set_OF(&tzero);
 
