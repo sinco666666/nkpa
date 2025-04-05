@@ -126,6 +126,35 @@ void init_qemu_reg() {
   assert(ok == 1);
 }
 
+// void difftest_step(uint32_t eip) {
+//   union gdb_regs r;
+//   bool diff = false;
+
+//   if (is_skip_nemu) {
+//     is_skip_nemu = false;
+//     return;
+//   }
+
+//   if (is_skip_qemu) {
+//     // to skip the checking of an instruction, just copy the reg state to qemu
+//     gdb_getregs(&r);
+//     regcpy_from_nemu(r);
+//     gdb_setregs(&r);
+//     is_skip_qemu = false;
+//     return;
+//   }
+
+//   gdb_si();
+//   gdb_getregs(&r);
+
+//   // TODO: Check the registers state with QEMU.
+//   // Set `diff` as `true` if they are not the same.
+//   TODO();
+
+//   if (diff) {
+//     nemu_state = NEMU_END;
+//   }
+// }
 void difftest_step(uint32_t eip) {
   union gdb_regs r;
   bool diff = false;
@@ -149,28 +178,59 @@ void difftest_step(uint32_t eip) {
 
   // TODO: Check the registers state with QEMU.
   // Set `diff` as `true` if they are not the same.
-  //TODO();
-
-  if (r.eax != cpu.eax) diff = true;
-  if (r.eax != cpu.ecx) diff = true;
-  if (r.eax != cpu.edx) diff = true;
-  if (r.eax != cpu.ebx) diff = true;
-  if (r.eax != cpu.esp) diff = true;
-  if (r.eax != cpu.ebp) diff = true;
-  if (r.eax != cpu.esi) diff = true;
-  if (r.eax != cpu.edi) diff = true;
-  // if (r.eax != cpu.eax || r.ecx != cpu.ecx || r.edx != cpu.edx ||
-  //     r.ebx != cpu.ebx || r.esp != cpu.esp || r.ebp != cpu.ebp ||
-  //     r.esi != cpu.esi || r.edi != cpu.edi){
-  //       diff = true;
-  //     }
-
-  if (diff) {
-    nemu_state = NEMU_END;
-    Log("Different in registers: when nemu.eip=0x%x", cpu.eip);
+  if(r.eip != cpu.eip){
+      diff = true;
+      printf("Diff: eip  QEMU: 0x%08x\n",r.eip);
+      printf("           NEMU: 0x%08x\n",cpu.eip);
   }
-  if (r.eip != cpu.eip) {
-    diff = true;
-    Log("Different:qemu.eip=0x%x, and nemu.eip=0x%x", r.eip, cpu.eip);
+  if(r.eax != cpu.eax){
+      diff = true;
+      printf("Diff: eax  QEMU: 0x%08x\n",r.eax);
+      printf("           NEMU: 0x%08x\n",cpu.eax);
+  }
+  if(r.ecx != cpu.ecx){
+      diff = true;
+      printf("Diff: ecx  QEMU: 0x%08x\n",r.ecx);
+      printf("           NEMU: 0x%08x\n",cpu.ecx);
+  }
+  if(r.ebx != cpu.ebx){
+      diff = true;
+      printf("Diff: ebx  QEMU: 0x%08x\n",r.ebx);
+      printf("           NEMU: 0x%08x\n",cpu.ebx);
+  }
+  if(r.edx != cpu.edx){
+      diff = true;
+      printf("Diff: edx  QEMU: 0x%08x\n",r.edx);
+      printf("           NEMU: 0x%08x\n",cpu.edx);
+  }
+  if(r.ebp != cpu.ebp){
+      diff = true;
+      printf("Diff: ebp  QEMU: 0x%08x\n",r.ebp);
+      printf("           NEMU: 0x%08x\n",cpu.ebp);
+  }
+  if(r.esp != cpu.esp){
+      diff = true;
+      printf("Diff: esp  QEMU: 0x%08x\n",r.esp);
+      printf("           NEMU: 0x%08x\n",cpu.esp);
+  }
+  if(r.esi != cpu.esi){
+      diff = true;
+      printf("Diff: esi  QEMU: 0x%08x\n",r.esi);
+      printf("           NEMU: 0x%08x\n",cpu.esi);
+  }
+  if(r.edi != cpu.edi){
+      diff = true;
+      printf("Diff: edi  QEMU: 0x%08x\n",r.edi);
+      printf("           NEMU: 0x%08x\n",cpu.edi);
+  }
+  if (diff) {
+    printf("ZF---NEMU:%d\n",cpu.eflags.ZF);
+    printf("SF---NEMU:%d\n",cpu.eflags.SF);
+    printf("OF---NEMU:%d\n",cpu.eflags.OF);
+    printf("CF---NEMU:%d\n",cpu.eflags.CF);
+    printf("IF---NEMU:%d\n",cpu.eflags.IF);
+    printf("EFLAGS in NEMU:0x%08x\n",cpu.eflags.val);
+    printf("EFLAGS in QEMU:0x%08x\n",r.eflags);
+    nemu_state = NEMU_END;
   }
 }
