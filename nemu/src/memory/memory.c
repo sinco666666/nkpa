@@ -1,5 +1,4 @@
 #include "nemu.h"
-#include"/home/sinco/ics2017/nemu/src/device/io/mmio.c"
 
 #define PMEM_SIZE (128 * 1024 * 1024)
 
