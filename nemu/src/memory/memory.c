@@ -13,10 +13,19 @@ uint8_t pmem[PMEM_SIZE];
 
 uint32_t paddr_read(paddr_t addr, int len) {
   return pmem_rw(addr, uint32_t) & (~0u >> ((4 - len) << 3));
+  // int port;
+  // if((port = is_mmio(addr))!=-1)
+  //     return mmio_read(addr,len,port);
+  // return pmem_rw(addr, uint32_t) & (~0u >> ((4 - len) << 3));
 }
 
 void paddr_write(paddr_t addr, int len, uint32_t data) {
   memcpy(guest_to_host(addr), &data, len);
+  // int port;
+  // if((port = is_mmio(addr))!=-1)
+  //     mmio_write(addr,len,data,port);
+  // else
+  //     memcpy(guest_to_host(addr), &data, len);
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
