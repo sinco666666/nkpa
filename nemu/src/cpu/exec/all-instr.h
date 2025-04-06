@@ -48,6 +48,7 @@ make_EHelper(idiv);
 make_EHelper(leave);
 make_EHelper(sbb);
 make_EHelper(neg);
+make_EHelper(mul);
 
 make_EHelper(in);
 make_EHelper(out);
