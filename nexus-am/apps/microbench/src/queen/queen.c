@@ -10,12 +10,7 @@ static unsigned int dfs(unsigned int row, unsigned int ld, unsigned int rd) {
     while (pos) {
       unsigned int p = (pos & (~pos + 1));
       pos -= p;
-      
-      // 修复：安全地处理移位操作
-      unsigned int new_ld = (ld | p) << 1;
-      unsigned int new_rd = (rd | p) >> 1;
-      
-      ans += dfs(row | p, new_ld, new_rd);
+      ans += dfs(row | p, (ld | p) << 1, (rd | p) >> 1);
     }
     return ans;
   }
