@@ -29,9 +29,9 @@ void paddr_write(paddr_t addr, int len, uint32_t data) {
     mmio_write(addr, len, data, r);
 }
 
-// uint32_t vaddr_read(vaddr_t addr, int len) {
-//   return paddr_read(addr, len);
-// }
+uint32_t vaddr_read(vaddr_t addr, int len) {
+  return paddr_read(addr, len);
+}
 
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
   paddr_write(addr, len, data);
