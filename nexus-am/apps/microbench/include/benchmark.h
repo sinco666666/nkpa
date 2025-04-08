@@ -32,8 +32,8 @@ extern "C" {
 //                 size |  heap | time |  checksum   
 #define QSORT_SM {     100,   1 KB,     0, 0x08467105}
 #define QSORT_LG {  100000, 640 KB,  5519, 0xed8cff89}
-#define QUEEN_SM {       1048576,   4 MB, 26469, 0x0000005c}
-#define QUEEN_LG {      1048576,   4 MB, 26469, 0x00003778}
+#define QUEEN_SM {       8,   4 MB,     0, 0x0000005c}
+#define QUEEN_LG {      12,   4 MB,  5159, 0x00003778}
 #define    BF_SM {       4,  32 KB,     0, 0xa6f0079e}
 #define    BF_LG {     180,  32 KB, 26209, 0x9221e2b3}
 #define   FIB_SM {       2,   1 KB,     0, 0x7cfeddf0}
