@@ -10,7 +10,18 @@ static unsigned int dfs(unsigned int row, unsigned int ld, unsigned int rd) {
     while (pos) {
       unsigned int p = (pos & (~pos + 1));
       pos -= p;
-      ans += dfs(row | p, (ld | p) << 1, (rd | p) >> 1);
+      
+      // 确保移位不会导致溢出
+      unsigned int new_ld = (ld | p);
+      unsigned int new_rd = (rd | p);
+      
+      // 检查移位是否会导致问题
+      if ((new_ld << 1) < new_ld || (new_rd >> 1) > new_rd) {
+        // 处理潜在的溢出/下溢
+        continue;
+      }
+      
+      ans += dfs(row | p, new_ld << 1, new_rd >> 1);
     }
     return ans;
   }
