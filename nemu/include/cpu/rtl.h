@@ -129,25 +129,25 @@ inline void rtl_mv(rtlreg_t* dest, const rtlreg_t *src1) {
   *dest = *src1;
 }
 
-static inline void rtl_not(rtlreg_t* dest) {
+inline void rtl_not(rtlreg_t* dest) {
   // dest <- ~dest
   *dest = ~(*dest);
 }
 
-static inline void rtl_sext(rtlreg_t* dest, const rtlreg_t* src1, int width) {
+inline void rtl_sext(rtlreg_t* dest, const rtlreg_t* src1, int width) {
   // dest <- signext(src1[(width * 8 - 1) .. 0])
   int shift = (4 - width) * 8;
   *dest = (int32_t)(*src1 << shift) >> shift;
 }
 
-static inline void rtl_push(const rtlreg_t* src1) {
+inline void rtl_push(const rtlreg_t* src1) {
   // esp <- esp - 4
   // M[esp] <- src1
   cpu.esp -= 4;
   vaddr_write(cpu.esp, 4, *src1);
 }
 
-static inline void rtl_pop(rtlreg_t* dest) {
+inline void rtl_pop(rtlreg_t* dest) {
   // dest <- M[esp]
   // esp <- esp + 4
   *dest = vaddr_read(cpu.esp, 4);
