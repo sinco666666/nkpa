@@ -6,7 +6,7 @@ extern size_t get_ramdisk_size();
 
 uintptr_t loader(_Protect *as, const char *filename) {
   size_t size = get_ramdisk_size();
-  void * buff = NULL;
+  void * buff = DEFAULT_ENTRY;
   ramdisk_read(buff,0,size);
   return (uintptr_t)buff;
 }
