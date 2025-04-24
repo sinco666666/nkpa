@@ -3,17 +3,28 @@
 
 ssize_t fs_write(int fd, const void *buf, size_t len);
 static inline _RegSet* sys_write(_RegSet *r){
-  Log("");
+  // Log("");
+  // int fd = (int)SYSCALL_ARG2(r);
+  // char *buf = (char *)SYSCALL_ARG3(r);
+  // int len = (int)SYSCALL_ARG4(r);
+  // //SYSCALL_ARG1(r) = fs_write(fd,buf,len);
+  // uintptr_t i=0;
+  // if(fd==1||fd==2){
+  //   for(;len>0;len--){
+  //     _putc(buf[i]);
+  //     i++;
+  //   }
+  // }
+  // return NULL;
   int fd = (int)SYSCALL_ARG2(r);
   char *buf = (char *)SYSCALL_ARG3(r);
   int len = (int)SYSCALL_ARG4(r);
-  //SYSCALL_ARG1(r) = fs_write(fd,buf,len);
-  uintptr_t i=0;
-  if(fd==1||fd==2){
-    for(;len>0;len--){
-      _putc(buf[i]);
-      i++;
-    }
+  Log("");
+  if(fd == 1 || fd == 2){
+      for(int i = 0; i < len; i++) {
+          _putc(buf[i]);
+      }
+      SYSCALL_ARG1(r) = SYSCALL_ARG4(r);
   }
   return NULL;
 }
