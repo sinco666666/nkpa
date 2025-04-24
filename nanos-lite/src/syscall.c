@@ -6,7 +6,14 @@ static inline _RegSet* sys_write(_RegSet *r){
   int fd = (int)SYSCALL_ARG2(r);
   char *buf = (char *)SYSCALL_ARG3(r);
   int len = (int)SYSCALL_ARG4(r);
-  SYSCALL_ARG1(r) = fs_write(fd,buf,len);
+  //SYSCALL_ARG1(r) = fs_write(fd,buf,len);
+  uintptr_t i=0;
+  if(fd==1||fd==2){
+    for(;len>0;len--){
+      _putc(buf[i]);
+      i++;
+    }
+  }
   return NULL;
 }
 _RegSet* do_syscall(_RegSet *r) {
