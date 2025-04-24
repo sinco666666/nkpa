@@ -31,25 +31,37 @@ extern void ramdisk_write(const void *buf, off_t offset, size_t len);
 size_t fs_filesz(int fd) {
 	return file_table[fd].size;
 }
-ssize_t fs_write(int fd, const void *buf, size_t len) {
-	ssize_t fs_size = fs_filesz(fd);
-	switch(fd) {
-		case FD_STDOUT:
-		case FD_STDERR:
-			for(int i = 0; i < len; i++) {
-				_putc(((char*)buf)[i]);
-			}
-			break;
-		case FD_FB:
-			fb_write(buf, file_table[fd].open_offset, len);
-			file_table[fd].open_offset += len;
-			break;
-		default:
-			if(file_table[fd].open_offset + len > fs_size)
-				len = fs_size - file_table[fd].open_offset;
-			ramdisk_write(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
-			file_table[fd].open_offset += len;
-			break;
-	}
-	return len;
+off_t disk_offset(int fd) {
+  assert(fd>=0 && fd<NR_FILES);
+  return file_table[fd].disk_offset;
+}
+
+off_t get_open_offset(int fd) {
+  assert(fd>=0 && fd<NR_FILES);
+  return file_table[fd].open_offset;
+}
+
+void set_open_offset(int fd, off_t n) {
+  assert(fd>=0 && fd<NR_FILES);
+  assert(n>=0);
+  if(n > file_table[fd].size)
+    n = file_table[fd].size;
+  file_table[fd].open_offset = n;
+}
+ssize_t fs_write(int fd, void* buf, size_t len) {
+  assert(fd>=0 && fd<NR_FILES);
+  if (fd < 3 || fd==FD_DISPINFO) {
+    Log("arg invaid:fd<3 || fd==FD_DISPINFO");
+    return 0;
+  }
+  int n = fs_filesz(fd) - get_open_offset(fd);
+  if (n > len)
+    n = len;
+
+  if (fd == FD_FB)
+    fb_write(buf, get_open_offset(fd), n);
+  else
+    ramdisk_write(buf, disk_offset(fd)+get_open_offset(fd), n);
+  set_open_offset(fd, get_open_offset(fd)+n);
+  return n;
 }
