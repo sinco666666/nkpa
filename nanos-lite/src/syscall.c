@@ -3,6 +3,7 @@
 
 ssize_t fs_write(int fd, const void *buf, size_t len);
 static inline _RegSet* sys_write(_RegSet *r){
+  Log("");
   int fd = (int)SYSCALL_ARG2(r);
   char *buf = (char *)SYSCALL_ARG3(r);
   int len = (int)SYSCALL_ARG4(r);
