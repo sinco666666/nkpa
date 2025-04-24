@@ -29,17 +29,18 @@ int _write(int fd, void *buf, size_t count){
   _syscall_(SYS_write, fd, (uintptr_t)buf, count);
 }
 
-void *_sbrk(intptr_t increment){
-  extern char end;
-  static uintptr_t probreak = (uintptr_t)&end;
-  uintptr_t probreak_new = probreak + increment;
-  int r = _syscall_(SYS_brk, probreak_new, 0, 0);
-  if (r == 0) {
-    uintptr_t temp = probreak;
-    probreak = probreak_new;
-    return (void *)temp;
-  }
-  return (void *)-1;
+extern char _end;
+intptr_t program_break=(intptr_t)&_end;
+void *sbrk(intptr_t increment){
+    intptr_t old_pb = program_break;
+    int test=syscall(SYS_brk,old_pb+increment,0,0,0);
+    if(test==0)
+    {
+        program_break += increment;
+        return (void*)old_pb;
+    }
+    else
+        return (void *)-1;
 }
 
 int _read(int fd, void *buf, size_t count) {
