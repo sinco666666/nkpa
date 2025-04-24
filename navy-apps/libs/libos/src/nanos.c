@@ -29,14 +29,15 @@ int _write(int fd, void *buf, size_t count){
   _syscall_(SYS_write, fd, (uintptr_t)buf, count);
 }
 
-extern char _end;
-static intptr_t brk = (intptr_t)&_end;
 void *_sbrk(intptr_t increment){
-  intptr_t old_brk = brk;
-  intptr_t new_brk = old_brk + increment;
-  if(_syscall_(SYS_brk,new_brk,0,0) == 0){
-      brk = new_brk;
-      return (void*)old_brk;
+  extern char end;
+  static uintptr_t probreak = (uintptr_t)&end;
+  uintptr_t probreak_new = probreak + increment;
+  int r = _syscall_(SYS_brk, probreak_new, 0, 0);
+  if (r == 0) {
+    uintptr_t temp = probreak;
+    probreak = probreak_new;
+    return (void *)temp;
   }
   return (void *)-1;
 }
