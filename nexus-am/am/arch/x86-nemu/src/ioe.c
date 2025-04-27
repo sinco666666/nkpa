@@ -34,12 +34,10 @@ void _draw_rect(const uint32_t *pixels, int x, int y, int w, int h) {
 void _draw_sync() {
 }
 
-int _read_key() {
-  //return _KEY_NONE;
-  if (inb(0x64)){
-    return inl(0x60);
-  }
-  else{
-    return _KEY_NONE;
-  }
+int _read_key(){
+uint32_t key=_KEY_NONE;
+if (inb(0x64)){
+key = inl(0x60);
+}
+return key;
 }
