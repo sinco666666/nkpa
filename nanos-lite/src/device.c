@@ -10,19 +10,24 @@ static const char *keyname[256] __attribute__((used)) = {
 
 size_t events_read(void *buf, size_t len) {
   int key = _read_key();
-	bool down = false;
-	if (key & 0x8000) {
-		key ^= 0x8000;
-		down = true;
-	}
-	if (key == _KEY_NONE) {
-		sprintf(buf, "t %d\n", _uptime());
-	}
-	else {
-		sprintf(buf, "%s %s\n", down ? "kd" : "ku", keyname[key]);
-	}
-	return strlen(buf);
+  bool down = false;
+
+  if (key == _KEY_NONE) {
+    // 没有按键事件，就输出当前时间
+    sprintf(buf, "t %d\n", _uptime());
+  } else {
+    // 有按键事件
+    if (key & 0x8000) {
+      down = true;
+      key ^= 0x8000; // 去掉最高位
+    }
+    // 输出 kd/ku 加上键名，比如 kd A
+    sprintf(buf, "%s %s\n", down ? "kd" : "ku", keyname[key]);
+  }
+
+  return strlen(buf);
 }
+
 
 static char dispinfo[128] __attribute__((used));
 
