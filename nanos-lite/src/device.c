@@ -12,21 +12,32 @@ size_t events_read(void *buf, size_t len) {
   int key = _read_key();
   bool down = false;
 
+  // 打印读到的原始 key
+  printf("[DEBUG] raw key = 0x%x\n", key);
+
   if (key == _KEY_NONE) {
-    // 没有按键事件，就输出当前时间
     sprintf(buf, "t %d\n", _uptime());
+    printf("[DEBUG] no key pressed, uptime = %d\n", _uptime());
   } else {
-    // 有按键事件
     if (key & 0x8000) {
       down = true;
-      key ^= 0x8000; // 去掉最高位
+      key ^= 0x8000;
     }
-    // 输出 kd/ku 加上键名，比如 kd A
-    sprintf(buf, "%s %s\n", down ? "kd" : "ku", keyname[key]);
+    printf("[DEBUG] processed key = 0x%x (%s), down = %d\n", key, keyname[key], down);
+
+    if (keyname[key] != NULL) {
+      sprintf(buf, "%s %s\n", down ? "kd" : "ku", keyname[key]);
+    } else {
+      // 如果 keyname[key] 是 NULL，说明 key 超出了范围，输出错误提示
+      sprintf(buf, "Unknown key 0x%x\n", key);
+      printf("[ERROR] Unknown key: 0x%x\n", key);
+    }
   }
 
+  printf("[DEBUG] final buf = %s\n", (char *)buf);
   return strlen(buf);
 }
+
 
 
 static char dispinfo[128] __attribute__((used));
