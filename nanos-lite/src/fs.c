@@ -50,7 +50,7 @@ int fs_open(const char* filename, int flags, int mode) {
 
 ssize_t fs_read(int fd, void *buf, size_t len) {
 	ssize_t fs_size = fs_filesz(fd);
-	if (file_table[fd].open_offset + len > fs_size) //偏移量不可以超过文件边界 超出部分舍弃
+	if (file_table[fd].open_offset + len > fs_size)
 		len = fs_size - file_table[fd].open_offset;
 	switch(fd) {
 		case FD_STDOUT:
@@ -118,6 +118,7 @@ off_t fs_lseek(int fd, off_t offset, int whence) {
 	
 	return result;
 }
+
 int fs_close(int fd) {
 	return 0;
 }
