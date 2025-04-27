@@ -9,20 +9,33 @@ static const char *keyname[256] __attribute__((used)) = {
 };
 
 size_t events_read(void *buf, size_t len) {
-  Log("events_read");
   int key = _read_key();
-	bool down = false;
-	if (key & 0x8000) {
-		key ^= 0x8000;
-		down = true;
-	}
-	if (key == _KEY_NONE) {
-		sprintf(buf, "t %d\n", _uptime());
-	}
-	else {
-		sprintf(buf, "%s %s\n", down ? "kd" : "ku", keyname[key]);
-	}
-	return strlen(buf);
+  bool down = false;
+
+  // 打印读到的原始 key
+  printf("[DEBUG] raw key = 0x%x\n", key);
+
+  if (key == _KEY_NONE) {
+    sprintf(buf, "t %d\n", _uptime());
+    printf("[DEBUG] no key pressed, uptime = %d\n", _uptime());
+  } else {
+    if (key & 0x8000) {
+      down = true;
+      key ^= 0x8000;
+    }
+    printf("[DEBUG] processed key = 0x%x (%s), down = %d\n", key, keyname[key], down);
+
+    if (keyname[key] != NULL) {
+      sprintf(buf, "%s %s\n", down ? "kd" : "ku", keyname[key]);
+    } else {
+      // 如果 keyname[key] 是 NULL，说明 key 超出了范围，输出错误提示
+      sprintf(buf, "Unknown key 0x%x\n", key);
+      printf("[ERROR] Unknown key: 0x%x\n", key);
+    }
+  }
+
+  printf("[DEBUG] final buf = %s\n", (char *)buf);
+  return strlen(buf);
 }
 
 

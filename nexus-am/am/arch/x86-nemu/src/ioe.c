@@ -34,29 +34,10 @@ void _draw_rect(const uint32_t *pixels, int x, int y, int w, int h) {
 void _draw_sync() {
 }
 
-// 简单 putch 输出一个字符
-void putch(char ch) {
-  outb(0x3f8, ch); // 向串口 COM1 发送一个字节
-}
-
-// 简单打印 16 进制
-void print_hex(uint32_t val) {
-  const char *hex = "0123456789ABCDEF";
-  for (int i = 7; i >= 0; i--) {
-    putch(hex[(val >> (i * 4)) & 0xF]);
-  }
-}
-
-// 修改后的 _read_key 带调试输出
 int _read_key() {
-  if (inb(0x64)) {
-    uint32_t keycode = inl(0x60);
-    putch('['); putch('D'); putch('E'); putch('B'); putch('U'); putch('G'); putch(']'); putch(' ');
-    putch('k'); putch('e'); putch('y'); putch('c'); putch('o'); putch('d'); putch('e'); putch('=');
-    print_hex(keycode);
-    putch('\n');
-    return keycode;
-  } else {
+  //return _KEY_NONE;
+  if (inb(0x64))
+    return inl(0x60);
+  else
     return _KEY_NONE;
-  }
 }
