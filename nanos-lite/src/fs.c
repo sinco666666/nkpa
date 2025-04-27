@@ -50,31 +50,24 @@ int fs_open(const char* filename, int flags, int mode) {
 
 ssize_t fs_read(int fd, void *buf, size_t len) {
 	ssize_t fs_size = fs_filesz(fd);
-	if (file_table[fd].open_offset + len > fs_size)
+	if (file_table[fd].open_offset + len > fs_size) //偏移量不可以超过文件边界 超出部分舍弃
 		len = fs_size - file_table[fd].open_offset;
 	switch(fd) {
 		case FD_STDOUT:
-		case FD_FB:
-				break;
+		case FD_STDERR:
+		case FD_STDIN:
+			return 0;
 		case FD_EVENTS:
-				len = events_read((void *)buf, len);
-				break;
+			len = events_read((void *)buf, len);
+			break;
 		case FD_DISPINFO:
-				if (file_table[fd].open_offset >= file_table[fd].size)
-						return 0;
-				if (file_table[fd].open_offset + len > file_table[fd].size)
-						len = file_table[fd].size - file_table[fd].open_offset;
-				dispinfo_read(buf, file_table[fd].open_offset, len);
-				file_table[fd].open_offset += len;
-				break;
+			dispinfo_read(buf, file_table[fd].open_offset, len);
+			file_table[fd].open_offset += len;	
+			break;
 		default:
-				if(file_table[fd].open_offset >= fs_size || len == 0)
-						return 0;
-				if(file_table[fd].open_offset + len > fs_size)
-						len = fs_size - file_table[fd].open_offset;
-				ramdisk_read(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
-				file_table[fd].open_offset += len;
-				break;
+			ramdisk_read(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
+			file_table[fd].open_offset += len;
+			break;
 	}
 	return len;
 }
@@ -84,22 +77,20 @@ ssize_t fs_write(int fd, const void *buf, size_t len) {
 	switch(fd) {
 		case FD_STDOUT:
 		case FD_STDERR:
-				for(int i = 0; i < len; i++) {
-						_putc(((char*)buf)[i]);
-				}
-				break;
+			for(int i = 0; i < len; i++) {
+				_putc(((char*)buf)[i]);
+			}
+			break;
 		case FD_FB:
-				fb_write(buf, file_table[fd].open_offset, len);
-				file_table[fd].open_offset += len;
-				break;
+			fb_write(buf, file_table[fd].open_offset, len);
+			file_table[fd].open_offset += len;
+			break;
 		default:
-				if(file_table[fd].open_offset >= fs_size)
-						return 0;
-				if(file_table[fd].open_offset + len > fs_size)
-						len = fs_size - file_table[fd].open_offset;
-				ramdisk_write(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
-				file_table[fd].open_offset += len;
-				break;
+			if(file_table[fd].open_offset + len > fs_size)
+				len = fs_size - file_table[fd].open_offset;
+			ramdisk_write(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
+			file_table[fd].open_offset += len;
+			break;
 	}
 	return len;
 }
@@ -108,27 +99,25 @@ off_t fs_lseek(int fd, off_t offset, int whence) {
 	off_t result = -1;
 	switch(whence) {
 		case SEEK_SET:
-				if (offset >= 0 && offset <= file_table[fd].size) {
-						file_table[fd].open_offset = offset;
-						result = file_table[fd].open_offset = offset;
-				}
-				break;
-		case SEEK_CUR:
-				if ((offset + file_table[fd].open_offset >= 0) &&
-						(offset + file_table[fd].open_offset <= file_table[fd].size)) {
-						file_table[fd].open_offset += offset;
-						result = file_table[fd].open_offset;
-				}
-				break;
-		case SEEK_END:
-				file_table[fd].open_offset = file_table[fd].size + offset;
+			if (offset >= 0 && offset <= file_table[fd].size) {
+				file_table[fd].open_offset = offset;
 				result = file_table[fd].open_offset;
-				break;
+			}
+			break;
+		case SEEK_CUR:
+			if ((offset + file_table[fd].open_offset >= 0) && (offset + file_table[fd].open_offset <= file_table[fd].size)) {
+				file_table[fd].open_offset += offset;
+				result = file_table[fd].open_offset;
+			}
+			break;
+		case SEEK_END:
+			file_table[fd].open_offset = file_table[fd].size + offset;
+			result = file_table[fd].open_offset;
+			break;
 	}
 	
 	return result;
 }
-
 int fs_close(int fd) {
 	return 0;
 }
