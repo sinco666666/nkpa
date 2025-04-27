@@ -11,8 +11,8 @@ static const char *keyname[256] __attribute__((used)) = {
 size_t events_read(void *buf, size_t len) {
   int key = _read_key();
 	bool down = false;
-	if (key & 0x800) {
-		key ^= 0x800;
+	if (key & 0x8000) {
+		key ^= 0x8000;
 		down = true;
 	}
 	if (key == _KEY_NONE) {
