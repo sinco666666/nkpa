@@ -13,25 +13,22 @@ uint8_t pmem[PMEM_SIZE];
 #define PTX(va)     (((uint32_t)(va) >> 12) & 0x3ff)
 #define OFF(va)     ((uint32_t)(va) & 0xfff)
 #define PTE_ADDR(pte)   ((uint32_t)(pte) & ~0xfff)
-paddr_t page_translate(vaddr_t addr, bool w1r0) {
-    //Log("page_translate");
-    PDE pde, *pgdir;
-    PTE pte, *pgtab;
-    if (cpu.cr0.protect_enable && cpu.cr0.paging) {
-	    pgdir = (PDE *)(PTE_ADDR(cpu.cr3.val));
-	    pde.val = paddr_read((paddr_t)&pgdir[PDX(addr)], 4);
-	    assert(pde.present);
-	    pde.accessed = 1;
-
-	    pgtab = (PTE *)(PTE_ADDR(pde.val)); 
-	    pte.val = paddr_read((paddr_t)&pgtab[PTX(addr)], 4);
-	    assert(pte.present);
-	    pte.accessed = 1;
-	    pte.dirty = w1r0 ? 1 : pte.dirty; 
-
-	    return PTE_ADDR(pte.val) | OFF(addr); 
-	}
-    return addr;
+paddr_t page_translate(vaddr_t addr, bool write) {
+  PDE pde, *pgdir;
+  PTE pte, *ptdir;
+  if (cpu.cr0.protect_enable && cpu.cr0.paging) {
+    pgdir = (PDE*)(PTE_ADDR(cpu.cr3.val));
+    pde.val = paddr_read((paddr_t) &pgdir[PDX(addr)], 4);
+    //Assert(pde.present, "pde.val: 0x%x", pde.val);
+    pde.accessed = 1;
+    ptdir = (PTE*)(PTE_ADDR(pde.val));
+    pte.val = paddr_read((paddr_t)&ptdir[PTX(addr)], 4);
+    //Assert(pte.present, "ptdir:0x%x, pte.val: 0x%x, addr: 0x%x", ptdir, pte.val, addr);
+    pte.accessed = 1;
+    pte.dirty = write ? 1 : pte.dirty;
+    return PTE_ADDR(pte.val) | OFF(addr);
+  }
+  return addr;
 }
 
 /* Memory accessing interfaces */
