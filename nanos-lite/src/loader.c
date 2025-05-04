@@ -12,6 +12,7 @@ int fs_close(int fd);
 void* new_page(void);
 
 uintptr_t loader(_Protect *as, const char *filename) {
+  Log("loader");
   // size_t size = get_ramdisk_size();
   // void * buff = DEFAULT_ENTRY;
   // ramdisk_read(buff,0,size);
