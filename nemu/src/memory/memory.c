@@ -62,6 +62,7 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
 		data += (paddr_read(paddr, 1))<<8*i;
 	}
 	return data;
+  assert(0);
   } else {
     paddr_t paddr = page_translate(addr, false);
     return paddr_read(paddr, len);
@@ -75,6 +76,7 @@ void vaddr_write(vaddr_t addr, int len, uint32_t data) {
 		paddr_t paddr = page_translate(addr + i,true);
 		paddr_write(paddr,1,data>>8*i);
 	}
+  assert(0);
   } else {
     paddr_t paddr = page_translate(addr, true);
     paddr_write(paddr, len, data);
