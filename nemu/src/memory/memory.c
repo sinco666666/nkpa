@@ -19,11 +19,11 @@ paddr_t page_translate(vaddr_t addr, bool write) {
   if (cpu.cr0.protect_enable && cpu.cr0.paging) {
     pgdir = (PDE*)(PTE_ADDR(cpu.cr3.val));
     pde.val = paddr_read((paddr_t) &pgdir[PDX(addr)], 4);
-    //Assert(pde.present, "pde.val: 0x%x", pde.val);
+    assert(pde.present);
     pde.accessed = 1;
     ptdir = (PTE*)(PTE_ADDR(pde.val));
     pte.val = paddr_read((paddr_t)&ptdir[PTX(addr)], 4);
-    //Assert(pte.present, "ptdir:0x%x, pte.val: 0x%x, addr: 0x%x", ptdir, pte.val, addr);
+    assert(pte.present);
     pte.accessed = 1;
     pte.dirty = write ? 1 : pte.dirty;
     return PTE_ADDR(pte.val) | OFF(addr);
