@@ -14,7 +14,7 @@ uint8_t pmem[PMEM_SIZE];
 #define OFF(va)     ((uint32_t)(va) & 0xfff)
 #define PTE_ADDR(pte)   ((uint32_t)(pte) & ~0xfff)
 paddr_t page_translate(vaddr_t addr, bool w1r0) {
-    Log("page_translate");
+    //Log("page_translate");
     PDE pde, *pgdir;
     PTE pte, *pgtab;
     if (cpu.cr0.protect_enable && cpu.cr0.paging) {
@@ -56,6 +56,7 @@ void paddr_write(paddr_t addr, int len, uint32_t data) {
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
   //return paddr_read(addr, len);
+  Log("vaddr_read");
   if ((((addr) + (len) - 1) & ~PAGE_MASK) != ((addr) & ~PAGE_MASK)) {
 	uint32_t data = 0;
 	for(int i=0;i<len;i++){
@@ -71,6 +72,7 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
 }
 
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
+  Log("vaddr_write");
   //paddr_write(addr, len, data);
   if ((((addr) + (len) - 1) & ~PAGE_MASK) != ((addr) & ~PAGE_MASK)) {
 	for(int i=0;i<len;i++){
