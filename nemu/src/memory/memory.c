@@ -14,6 +14,7 @@ uint8_t pmem[PMEM_SIZE];
 #define OFF(va)     ((uint32_t)(va) & 0xfff)
 #define PTE_ADDR(pte)   ((uint32_t)(pte) & ~0xfff)
 paddr_t page_translate(vaddr_t addr, bool w1r0) {
+    Log("page_translate");
     PDE pde, *pgdir;
     PTE pte, *pgtab;
     if (cpu.cr0.protect_enable && cpu.cr0.paging) {
