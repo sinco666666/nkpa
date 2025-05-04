@@ -9,6 +9,7 @@ PCB *current = NULL;
 uintptr_t loader(_Protect *as, const char *filename);
 
 void load_prog(const char *filename) {
+  Log("load_prog");
   int i = nr_proc ++;
   _protect(&pcb[i].as);
 
