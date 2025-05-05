@@ -29,12 +29,15 @@ void load_prog(const char *filename) {
 }
 
 int count = 0;
+extern int current_game;
 _RegSet* schedule(_RegSet *prev) {
   current->tf = prev;
-  current = &pcb[0];
+  //current = &pcb[0];
+  current = (current_game == 0 ? &pcb[0] : &pcb[2]);
   count++;
   if (count == 100) {
-  current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
+  //current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
+  current = &pcb[1];
   count = 0;
   }
   _switch(&current->as);
