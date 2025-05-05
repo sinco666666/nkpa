@@ -254,7 +254,7 @@ void exec_wrapper(bool print_flag) {
   difftest_step(eip);
 #endif
 
-#define TIMER_IRQ 32
+#define TIMER_IRQ 0x32
   if (cpu.INTR & cpu.eflags.IF) {
   cpu.INTR = false;
   raise_intr(TIMER_IRQ, cpu.eip);
