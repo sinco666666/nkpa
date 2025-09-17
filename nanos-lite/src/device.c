@@ -8,6 +8,7 @@ static const char *keyname[256] __attribute__((used)) = {
   _KEYS(NAME)
 };
 
+int current_game = 0;
 size_t events_read(void *buf, size_t len) {
   int key = _read_key();
 	bool down = false;
@@ -20,6 +21,9 @@ size_t events_read(void *buf, size_t len) {
 	}
 	else {
 		sprintf(buf, "%s %s\n", down ? "kd" : "ku", keyname[key]);
+		if(key == 13 && down) {
+			current_game = (current_game == 0 ? 1 : 0);
+		}
 	}
 	return strlen(buf);
 }

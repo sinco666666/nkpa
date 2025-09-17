@@ -46,6 +46,11 @@ static inline _RegSet* sys_lseek(_RegSet *r) {
   SYSCALL_ARG1(r) = fs_lseek(fd,offset,whence);
   return NULL;
 }
+extern int mm_brk(uint32_t new_brk);
+static inline _RegSet* sys_brk(_RegSet *r) {
+  SYSCALL_ARG1(r) = mm_brk(SYSCALL_ARG2(r));
+  return NULL;
+}
 
 _RegSet* do_syscall(_RegSet *r) {
   uintptr_t a[4];
@@ -55,7 +60,7 @@ _RegSet* do_syscall(_RegSet *r) {
     case SYS_none: SYSCALL_ARG1(r) =1; break;
     case SYS_exit: _halt(SYSCALL_ARG2(r)); break;
     case SYS_write: return sys_write(r);
-    case SYS_brk:  SYSCALL_ARG1(r) = 0; break;
+    case SYS_brk:   return sys_brk(r);
     case SYS_open:return sys_open(r);
     case SYS_read:return sys_read(r);
     case SYS_close:return sys_close(r);

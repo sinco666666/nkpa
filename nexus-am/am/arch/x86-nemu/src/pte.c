@@ -66,11 +66,41 @@ void _switch(_Protect *p) {
 }
 
 void _map(_Protect *p, void *va, void *pa) {
+  PDE *pgdir = p->ptr;
+	PDE *pde = &pgdir[PDX(va)];
+	PTE *pgtab;
+	if (*pde & PTE_P) {
+		pgtab = (PTE *)PTE_ADDR(*pde);
+	} else {
+		pgtab = (PTE *)palloc_f();
+		*pde = PTE_ADDR(pgtab) | PTE_P;
+	}
+	pgtab[PTX(va)] = PTE_ADDR(pa) | PTE_P;
 }
 
 void _unmap(_Protect *p, void *va) {
 }
 
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
-  return NULL;
+  uint32_t *ptr = ustack.end;
+  for (int i = 0; i < 8; i++) {
+	*ptr = 0x0; 
+  	 ptr--;
+  }
+  *ptr = 0x2 | FL_IF; 	  
+  ptr--;
+  *ptr = 0x8; 	          
+  ptr--;
+  *ptr = (uint32_t)entry; 
+  ptr--;
+  *ptr = 0x0;             
+  ptr--;
+  *ptr = 0x81;            
+  ptr--;
+  for (int i = 0; i < 8; i++) {
+	*ptr = 0x0;
+  	 ptr--;
+  }
+  ptr++;
+  return (_RegSet *)ptr;
 }
